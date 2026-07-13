@@ -13,7 +13,13 @@ class LuckyController
     #[Route('/lucky/number')]
     public function number(LuckyService $luckyService, Request $request): Response
     {
-        $qt_chars = $request->query->getInt('qt_chars', 6);
+        $qt_chars_raw = $request->query->get('qt_chars', '6');
+
+        if (!ctype_digit($qt_chars_raw)) {
+            return new JsonResponse(['error' => 'qt_chars must be a numeric value'], 400);
+        }
+
+        $qt_chars = (int) $qt_chars_raw;
         if ($qt_chars < 1 || $qt_chars > 18) {
             return new JsonResponse(['error' => 'qt_chars must be between 1 and 18'], 400);
         }
@@ -30,13 +36,22 @@ class LuckyController
     #[Route('/lucky/number_chars')]
     public function number_chars(LuckyService $luckyService, Request $request): Response
     {
-        $qt_chars = $request->query->getInt('qt_chars', 6);
-        $number_chars = $luckyService->generateNumberChars($qt_chars);
-        
-        $data = ['number' => $number_chars, 'qt_chars' => $qt_chars, 'length' => strlen($number_chars)];
+        $qt_chars_raw = $request->query->get('qt_chars', '6');
 
-        // Status code defaults to 200 OK
-        return new JsonResponse($data);
+        if (!ctype_digit($qt_chars_raw)) {
+            return new JsonResponse(['error' => 'qt_chars must be a numeric value'], 400);
+        }
+
+        $qt_chars = (int) $qt_chars_raw;
+        if ($qt_chars < 1 || $qt_chars > 18) {
+            return new JsonResponse(['error' => 'qt_chars must be between 1 and 18'], 400);
+        }
+        $number_chars = $luckyService->generateNumberChars($qt_chars);
+
+        return new JsonResponse([
+            'number' => $number_chars,
+            'qt_chars' => $qt_chars, 
+            'length' => strlen($number_chars)]);
     
     }
 }
