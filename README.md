@@ -48,7 +48,23 @@ php composer.phar install
 
 #### Ajustes no php.ini
 php --ini
+sudo cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 
+xdebug.mode=debug
+xdebug.start_with_request=yes
+xdebug.client_host=host.docker.internal
+xdebug.client_port=9003
+
+sudo cp php.ini /usr/local/etc/php/php.ini
+
+teste
+php -m | grep xdebug
+php -i | grep xdebug
+
+
+code /usr/local/etc/php/conf.d/xdebug.ini
+
+sudo cp xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 ## starts the server and opens the application in a single command
 
@@ -74,3 +90,16 @@ php bin/phpunit
 ou
 
 symfony php ./vendor/bin/phpunit
+
+
+### Criando testes funcionais para REST
+
+composer require api
+composer require --dev symfony/browser-kit symfony/http-client
+
+symfony console make:test ApiTestCase LuckyControllerTest
+
+
+Executando os testes
+symfony php ./vendor/bin/phpunit
+

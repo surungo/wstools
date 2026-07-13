@@ -14,12 +14,16 @@ class LuckyController
     public function number(LuckyService $luckyService, Request $request): Response
     {
         $qt_chars = $request->query->getInt('qt_chars', 6);
+        if ($qt_chars < 1 || $qt_chars > 18) {
+            return new JsonResponse(['error' => 'qt_chars must be between 1 and 18'], 400);
+        }
         $number = $luckyService->generateNumber($qt_chars);
 
-        $data = ['number' => $number, 'qt_chars' => $qt_chars, 'length' => strlen((string) $number) ];
-
-        // Status code defaults to 200 OK
-        return new JsonResponse($data);
+        return new JsonResponse([
+            'number' => $number,
+            'qt_chars' => $qt_chars,
+            'length' => strlen((string) $number),
+        ]);
     
     }
 
